@@ -21,7 +21,7 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
   /**
    * The comparator used to determine the ordering in the tree.
    */
-  Comparator<K> comparator;
+  Comparator<? super K> comparator;
 
   /**
    * The size of the tree.
@@ -63,8 +63,34 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
 
   @Override
   public V set(K key, V value) {
-    return null;        // STUB
+    return null;
   } // set(K,V)
+
+  /** 
+   * Helper function to recursively traverse BST
+   * @return BSTNode newNode
+   */
+  public BSTNode<K,V> setHelper(BSTNode<K,V> node, K key, V value, Comparator<? super K> comparator){
+    /*We will first check if the node is null, if so make a new node.
+     * Then we will compare the nodes key to the inputted key
+     * We will then recursively call setHelper on whatever side of the tree is needed.
+     */
+    if(node == null){
+      BSTNode<K,V> newNode =  new BSTNode<K,V>(key, value);
+    } 
+    int comp = comparator.compare(key, node.key);
+    if (comp < 0) {
+     return setHelper(node.left, key, value, comparator);
+    } 
+    else if (comp > 0) {
+      return setHelper(node.right, key, value, comparator);
+    } else{
+      node.value = value;
+      return node;
+    }
+
+
+  }
 
   @Override
   public V get(K key) {
