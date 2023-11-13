@@ -63,7 +63,8 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
 
   @Override
   public V set(K key, V value) {
-    return null;
+    this.root = setHelper(this.root, key, value, this.comparator);
+    return value;
   } // set(K,V)
 
   /** 
@@ -71,26 +72,29 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
    * @return BSTNode newNode
    */
   public BSTNode<K,V> setHelper(BSTNode<K,V> node, K key, V value, Comparator<? super K> comparator){
-    /*We will first check if the node is null, if so make a new node.
-     * Then we will compare the nodes key to the inputted key
-     * We will then recursively call setHelper on whatever side of the tree is needed.
+    /*We will first check if the node value is equal to the inputted value, if so we set the node value to the inputted value
+     * If the node value is not equal to the inputted value, We will then recursively call setHelper on whatever side of the tree is needed.
      */
-    if(node == null){
-      BSTNode<K,V> newNode =  new BSTNode<K,V>(key, value);
-    } 
+    if (node == null){
+      return new BSTNode<K,V>(key, value);
+    }
     int comp = comparator.compare(key, node.key);
-    if (comp < 0) {
-     return setHelper(node.left, key, value, comparator);
-    } 
-    else if (comp > 0) {
-      return setHelper(node.right, key, value, comparator);
-    } else{
+    
+    if(comp == 0){
       node.value = value;
       return node;
+    } 
+    else if(comp < 0) {
+      node.left = setHelper(node.left, key, value, comparator);
+      return node;
     }
-
-
+    else{
+      node.right = setHelper(node.right, key, value, comparator);
+      return node;
+    }
   }
+
+
 
   @Override
   public V get(K key) {
@@ -102,7 +106,7 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
 
   @Override
   public int size() {
-    return 0;           // STUB
+    return this.size;           
   } // size()
 
   @Override
@@ -161,8 +165,20 @@ public class SimpleBST<K,V> implements SimpleMap<K,V> {
 
   @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {
-    // STUB
+    
   } // forEach
+
+  public BSTNode<K,V> forEachHelper(BSTNode<K,V> node, BiConsumer<? super K, ? super V> action){
+    if(node == null){
+      return node;
+    }
+
+    action.accept(node.key,node.value);
+    node.left = forEachHelper(node.left, action);
+    node.right = forEachHelper(node.right, action);
+    return node;
+    
+  }
 
   // +----------------------+----------------------------------------
   // | Other public methods |
